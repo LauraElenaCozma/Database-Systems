@@ -1,0 +1,207 @@
+CREATE TABLE actors_lco
+    (actor_id NUMBER(5) PRIMARY KEY,
+     first_name VARCHAR2(20) NOT NULL,
+     last_name VARCHAR2(20) NOT NULL,
+     place_of_birth VARCHAR2(20),
+     date_of_birth DATE,
+     representative_id NUMBER(5) REFERENCES actors_lco(actor_id));
+
+CREATE SEQUENCE actors_lco_seq 
+START WITH 1
+INCREMENT BY 1;
+
+INSERT INTO actors_lco (actor_id, first_name, last_name, place_of_birth, date_of_birth)
+VALUES (actors_lco_seq.NEXTVAL, 'Victor', 'Rebengiuc', 'Bucuresti', TO_DATE('10/02/1933', 'DD/MM/YYYY'));
+INSERT INTO actors_lco (actor_id, first_name, last_name, place_of_birth, date_of_birth, representative_id)
+VALUES (actors_lco_seq.NEXTVAL, 'Oana', 'Pellea', 'Bucuresti', TO_DATE('29/01/1962', 'DD/MM/YYYY'), 1);
+INSERT INTO actors_lco (actor_id, first_name, last_name, place_of_birth, date_of_birth)
+VALUES (actors_lco_seq.NEXTVAL, 'Maia', 'Morgenstern', 'Bucuresti', TO_DATE('01/05/1962', 'DD/MM/YYYY'));
+INSERT INTO actors_lco (actor_id, first_name, last_name, place_of_birth, date_of_birth, representative_id)
+VALUES (actors_lco_seq.NEXTVAL, 'Claudiu', 'Bleont', 'Bucuresti', TO_DATE('17/08/1959', 'DD/MM/YYYY'), 1);
+INSERT INTO actors_lco (actor_id, first_name, last_name, place_of_birth, date_of_birth, representative_id)
+VALUES (actors_lco_seq.NEXTVAL, 'Alexandru', 'Arsinel', 'Dolhasca', TO_DATE('04/06/1939', 'DD/MM/YYYY'), 3);
+
+SELECT * FROM actors_lco;
+
+
+CREATE TABLE plays_lco
+    (play_id NUMBER(5) PRIMARY KEY,
+     title VARCHAR2(50) NOT NULL,
+     author VARCHAR2(20),
+     director VARCHAR2(20),
+     duration NUMBER(3) NOT NULL,
+     genre VARCHAR2(20) NOT NULL);
+
+CREATE SEQUENCE plays_lco_seq 
+START WITH 1
+INCREMENT BY 1;
+
+INSERT INTO plays_lco (play_id, title, author, director, duration, genre) 
+VALUES (plays_lco_seq.NEXTVAL, 'Padurea spanzuratilor', 'Liviu Rebreanu', 'Radu Afrim', 190, 'drama');
+INSERT INTO plays_lco (play_id, title, author, director, duration, genre) 
+VALUES (plays_lco_seq.NEXTVAL, 'Trei surori', 'Anton Cehov', 'Radu Afrim', 180, 'drama');
+INSERT INTO plays_lco (play_id, title, author, director, duration, genre) 
+VALUES (plays_lco_seq.NEXTVAL, 'Doua loturi', 'I.L. Caragiale', 'Alexandru Dabija', 60, 'comedie');
+INSERT INTO plays_lco (play_id, title, author, director, duration, genre) 
+VALUES (plays_lco_seq.NEXTVAL, 'Toti fiii mei', 'Arthur Miller', 'Ion Caramitru', 160, 'drama');
+INSERT INTO plays_lco (play_id, title, director, duration, genre) 
+VALUES (plays_lco_seq.NEXTVAL, 'Jaful', 'Vlad Massaci', 130, 'drama');
+SELECT * FROM plays_lco;
+
+CREATE TABLE plays_actors_lco
+    (play_id NUMBER(5) REFERENCES plays_lco(play_id) ON DELETE CASCADE,
+     actor_id NUMBER(5) REFERENCES actors_lco(actor_id) ON DELETE CASCADE,
+     CONSTRAINT plays_actors_lco_pk PRIMARY KEY(play_id, actor_id));
+     
+INSERT INTO plays_actors_lco (play_id, actor_id)
+VALUES(1, 1);
+INSERT INTO plays_actors_lco (play_id, actor_id)
+VALUES(1, 3);
+INSERT INTO plays_actors_lco (play_id, actor_id)
+VALUES(1, 4);
+INSERT INTO plays_actors_lco (play_id, actor_id)
+VALUES(2, 2);
+INSERT INTO plays_actors_lco (play_id, actor_id)
+VALUES(2, 3);
+INSERT INTO plays_actors_lco (play_id, actor_id)
+VALUES(2, 5);
+INSERT INTO plays_actors_lco (play_id, actor_id)
+VALUES(4, 1);
+INSERT INTO plays_actors_lco (play_id, actor_id)
+VALUES(4, 4);
+INSERT INTO plays_actors_lco (play_id, actor_id)
+VALUES(4, 5);
+INSERT INTO plays_actors_lco (play_id, actor_id)
+VALUES(3, 1);
+
+SELECT * FROM plays_actors_lco;
+DROP TABLE plays_actors_lco;
+
+
+CREATE TABLE address_venues_lco
+    (address_id NUMBER(5) PRIMARY KEY,
+    institution_name VARCHAR2(30) NOT NULL,
+    city VARCHAR2(20) NOT NULL);
+
+CREATE SEQUENCE address_venues_lco_seq 
+START WITH 1
+INCREMENT BY 1;
+
+INSERT INTO address_venues_lco
+VALUES(address_venues_lco_seq.NEXTVAL, 'Teatrul Nottara', 'Bucuresti');
+INSERT INTO address_venues_lco
+VALUES(address_venues_lco_seq.NEXTVAL, 'Teatrul National Bucuresti', 'Bucuresti');
+INSERT INTO address_venues_lco
+VALUES(address_venues_lco_seq.NEXTVAL, 'Teatrul Odeon', 'Bucuresti');
+INSERT INTO address_venues_lco
+VALUES(address_venues_lco_seq.NEXTVAL, 'Teatrul National', 'Iasi');
+INSERT INTO address_venues_lco
+VALUES(address_venues_lco_seq.NEXTVAL, 'Teatrul National Cluj-Napoca', 'Cluj-Napoca');
+SELECT * FROM address_venues_lco;
+
+
+CREATE TABLE venues_lco
+    (venue_id NUMBER(5) PRIMARY KEY,
+     venue_name VARCHAR2(30) NOT NULL,
+     seat_capacity NUMBER(4) NOT NULL CHECK(seat_capacity > 10),
+     address_id NUMBER(5) REFERENCES address_venues_lco(address_id) ON DELETE CASCADE);
+
+
+CREATE SEQUENCE venues_lco_seq 
+START WITH 1
+INCREMENT BY 1;
+
+INSERT INTO venues_lco(venue_id, venue_name, seat_capacity, address_id)
+VALUES(venues_lco_seq.NEXTVAL, 'Sala Pictura', 150, 2);
+INSERT INTO venues_lco(venue_id, venue_name, seat_capacity, address_id)
+VALUES(venues_lco_seq.NEXTVAL, 'Ion Caramitru', 940, 2);
+INSERT INTO venues_lco(venue_id, venue_name, seat_capacity, address_id)
+VALUES(venues_lco_seq.NEXTVAL, 'Sala Mica', 20, 2);
+INSERT INTO venues_lco(venue_id, venue_name, seat_capacity, address_id)
+VALUES(venues_lco_seq.NEXTVAL, 'Sala Mica', 40, 3);
+INSERT INTO venues_lco(venue_id, venue_name, seat_capacity, address_id)
+VALUES(venues_lco_seq.NEXTVAL, 'Sala Mica', 50, 4);
+SELECT * FROM venues_lco;
+
+
+CREATE TABLE events_lco
+    (event_id NUMBER(5) PRIMARY KEY,
+     play_id NUMBER(5) REFERENCES plays_lco(play_id) ON DELETE CASCADE,
+     venue_id NUMBER(5) REFERENCES venues_lco(venue_id) ON DELETE CASCADE,
+     event_date DATE NOT NULL,
+     price NUMBER(4, 1) NOT NULL,
+     hour VARCHAR2(5) NOT NULL,
+     status VARCHAR2(20)); 
+
+CREATE SEQUENCE events_lco_seq 
+START WITH 1
+INCREMENT BY 1;
+
+INSERT INTO events_lco(event_id, play_id, venue_id, event_date, price, hour, status)
+VALUES(events_lco_seq.NEXTVAL, 1, 1, TO_DATE('30/01/2022', 'DD/MM/YYYY'), 60, '20:00', 'ACTIV');
+INSERT INTO events_lco
+VALUES(events_lco_seq.NEXTVAL, 1, 1, TO_DATE('15/02/2022', 'DD/MM/YYYY'), 60, '20:00', 'ANULAT');
+INSERT INTO events_lco
+VALUES(events_lco_seq.NEXTVAL, 4, 2, TO_DATE('04/02/2022', 'DD/MM/YYYY'), 90, '19:30', 'ACTIV');
+INSERT INTO events_lco(event_id, play_id, venue_id, event_date, price, hour)
+VALUES(events_lco_seq.NEXTVAL, 4, 2, TO_DATE('04/12/2021', 'DD/MM/YYYY'), 80, '20:30');
+INSERT INTO events_lco
+VALUES(events_lco_seq.NEXTVAL, 2, 2, TO_DATE('20/10/2021', 'DD/MM/YYYY'), 120, '19:00', 'ACTIV');
+INSERT INTO events_lco(event_id, play_id, venue_id, event_date, price, hour)
+VALUES(events_lco_seq.NEXTVAL, 2, 2, TO_DATE('20/12/2021', 'DD/MM/YYYY'), 120, '19:00');
+
+SELECT * FROM events_lco;
+
+
+CREATE TABLE customers_lco
+    (customer_id NUMBER(5) PRIMARY KEY,
+     first_name VARCHAR2(20) NOT NULL,
+     last_name VARCHAR2(20) NOT NULL,
+     email VARCHAR2(20) NOT NULL UNIQUE,
+     phone_number VARCHAR2(10) UNIQUE);
+     
+CREATE SEQUENCE customers_lco_seq 
+START WITH 1
+INCREMENT BY 1;
+
+INSERT INTO customers_lco(customer_id, first_name, last_name, email, phone_number)
+VALUES(customers_lco_seq.NEXTVAL, 'Ioana', 'Pop', 'ioanapop@gmail.com', '0721174482');
+INSERT INTO customers_lco(customer_id, first_name, last_name, email)
+VALUES(customers_lco_seq.NEXTVAL, 'Victor', 'Avram', 'avram_vic@gmail.com');
+INSERT INTO customers_lco(customer_id, first_name, last_name, email, phone_number)
+VALUES(customers_lco_seq.NEXTVAL, 'Marius', 'Dediu', 'marius@gmail.com', '0787123832');
+INSERT INTO customers_lco(customer_id, first_name, last_name, email, phone_number)
+VALUES(customers_lco_seq.NEXTVAL, 'Erika', 'Pitaru', 'pit_erika@gmail.com', '0719921004');
+INSERT INTO customers_lco(customer_id, first_name, last_name, email, phone_number)
+VALUES(customers_lco_seq.NEXTVAL, 'Alexandra', 'Popa', 'alex_pop@gmail.com', '0721193392');
+SELECT * FROM customers_lco;
+
+
+CREATE TABLE orders_lco
+    (event_id NUMBER(5) REFERENCES events_lco(event_id) ON DELETE CASCADE,
+     customer_id NUMBER(5) REFERENCES customers_lco(customer_id) ON DELETE CASCADE,
+     num_seats NUMBER(2) NOT NULL CHECK(num_seats > 0));
+     
+INSERT INTO orders_lco(event_id, customer_id, num_seats)
+VALUES(1, 3, 3);
+INSERT INTO orders_lco(event_id, customer_id, num_seats)
+VALUES(1, 4, 5);
+INSERT INTO orders_lco(event_id, customer_id, num_seats)
+VALUES(3, 2, 4);
+INSERT INTO orders_lco(event_id, customer_id, num_seats)
+VALUES(4, 1, 1);
+INSERT INTO orders_lco(event_id, customer_id, num_seats)
+VALUES(4, 2, 2);
+INSERT INTO orders_lco(event_id, customer_id, num_seats)
+VALUES(6, 1, 4);
+INSERT INTO orders_lco(event_id, customer_id, num_seats)
+VALUES(5, 2, 2);
+INSERT INTO orders_lco(event_id, customer_id, num_seats)
+VALUES(6, 5, 9);
+INSERT INTO orders_lco(event_id, customer_id, num_seats)
+VALUES(5, 1, 1);
+INSERT INTO orders_lco(event_id, customer_id, num_seats)
+VALUES(5, 5, 2);
+
+SELECT * FROM orders_lco;
+DROP TABLE orders_lco;
